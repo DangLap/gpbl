@@ -407,6 +407,7 @@ export default {
         this.employeeSelected = item;
         this.isFormAdd = false;
         console.log(this.employeeSelected);
+        //Lập đẹp trai
       } catch (error) {
         console.log(error);
       }
