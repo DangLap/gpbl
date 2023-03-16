@@ -1,0 +1,245 @@
+* {
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: DANGLAP-BOLD;
+    src: url(../assets/fonts/Roboto/Roboto-Bold.ttf);
+}
+
+@font-face {
+    font-family: DangLap-font;
+    src: url(../assets/fonts/Roboto/Roboto-Regular.ttf);
+}
+
+@font-face {
+    font-family: DangLap-font-semi;
+    src: url(../assets/fonts/Roboto/Roboto-Medium.ttf);
+}
+@import url(./toast.css);
+.lap_popup-container {
+    background-color: rgba(0, 0, 0, .4);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+}
+
+.lap_input-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.lap_popup-form {
+    width: 870px;
+    min-height: 200px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    padding: 24px 0 0 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.lap_popup__header {
+    margin-bottom: 24px;
+    font-size: 24px;
+    font-family: DANGLAP-BOLD;
+    position: relative;
+    padding: 0 24px 0 24px;
+    display: flex;
+    column-gap: 8px;
+    align-items: center;
+}
+
+.lap_popup__header__group-btn {
+    position: absolute;
+    right: 24px;
+    top: 0;
+    display: flex;
+    column-gap: 8px;
+}
+
+.lap_btn-question {
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -89px -145px;
+    width: 22px;
+    height: 22px;
+    scale: 0.9;
+    position: absolute;
+    top: -2px;
+    right: 24px;
+}
+
+.lap_btn-close {
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -147px -147px;
+    width: 18px;
+    height: 18px;
+}
+
+.lap_popup__body {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 0 24px 0 24px;
+
+}
+
+.lap_popup-group_bottom {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.lap_popup-group-left {
+    flex: 1;
+    width: calc(50% - 8px);
+    display: flex;
+    flex-direction: column;
+}
+
+.lap_popup-group-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.lap_popup-row {
+    display: flex;
+    flex-direction: row;
+    column-gap: 8px;
+}
+
+.lap_label {
+    font-family: DangLap-font-semi;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.lap_input-info {
+    outline: none;
+    height: 36px;
+    padding: 8px 12px 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #EBEBEB;
+    width: 100%;
+    display: flex;
+}
+
+.lap_txtdepartment{
+    height: 100%;
+    border: unset;
+    outline: unset;
+    width: calc(100% - 10px);
+}
+
+.lap_chevron-txtdepartment{
+    margin-top: 5px;
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -371px -364px;
+	width: 10px;
+	height: 8px;
+    cursor: pointer;
+}
+
+.lap_input-info:hover,
+.lap_input-info:focus {
+    border: 1px solid #50B83C !important;
+}
+
+.lap_employeeCode {
+    width: 120px !important;
+}
+
+.lap_flex-1 {
+    flex: 1;
+}
+
+.lap_flex-2{
+    width: 200px;
+    display: flex;
+    column-gap: 8px;
+}
+
+.lap_popup-row+.lap_popup-row {
+    margin-top: 14px;
+}
+
+.lap_dob-input{
+    width: 130px;
+}
+
+.lap_national-id{ 
+    width: 200px !important;
+}
+
+.lap_popup__footer{
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #F5F5F5;
+    border-top: 1px solid #E0E0E0;
+    padding: 0 24px 0 24px;
+    border-radius: 0 0 4px 4px;
+    font-family: DangLap-font-semi;
+}
+
+.lap_group-btn-right{
+    display: flex;
+    column-gap: 8px;
+}
+
+.required{
+    color: #ff0000;
+    margin-left: 2px;
+}
+
+.lap_gender_radio{
+    display: flex;
+    border: unset;
+    align-items: center;
+    padding-left: 0;
+    column-gap: 8px;
+}
+.lap_gender_radio:hover{
+    border: unset;
+}
+
+.lap_radio{
+    width: 20px;
+    height: 20px;
+    margin-bottom: 4px;
+    accent-color: green;
+}
+
+.lap_radio-contain{
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+.lap_roll-checkbox{
+    height: 100%;
+    display: flex;
+    font-size: 14px;
+    font-family: DangLap-font;
+    align-items: center;
+}
+
+#is-customer{
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+}
+
+#is-supplier{
+    margin-left: 14px;
+    margin-right: 8px;
+    width: 16px;
+    height: 16px;
+}

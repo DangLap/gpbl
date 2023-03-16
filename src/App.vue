@@ -1,26 +1,20 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <Sidebar></Sidebar>
+  <TheHeader></TheHeader>
+  <TheMain></TheMain>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import TheHeader from "../src/components/TheHeader.vue"
+import Sidebar from "../src/components/TheSidebar.vue"
+import TheMain from "../src/components/TheMain.vue"
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    TheHeader, Sidebar, TheMain,
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>

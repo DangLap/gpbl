@@ -1,0 +1,70 @@
+.header {
+    width: calc(100% - 200px);
+    height: 56px;
+    float: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.header__left {
+    display: flex;
+    flex-direction: row;
+    height: 56px;
+    align-items: center;
+}
+
+.header__left__icon {
+    margin: 16px 16px;
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -847px -33px;
+    width: 16px;
+    height: 16px;
+}
+
+.company__name {
+    color: #424242;
+    font-size: 14px;
+    margin: 16px 16px 16px 0;
+    font-family: DangLap-font-semibold;
+}
+
+@font-face {
+    font-family: DangLap-font-semibold;
+    src: url(../assets/fonts/notosans-semibold.df3e6dc4.woff2);
+}
+
+.header__chevron {
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -467px -414px;
+    width: 10px;
+    height: 5px;
+    cursor: pointer;
+}
+
+.header__right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 100%;
+    padding-right: 24px;
+}
+
+.notify-icon {
+    margin: 18px 24px;
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -257px -32px;
+    width: 22px;
+    height: 25px;
+}
+
+.avatar {
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -352px -894px;
+	width: 32px;
+	height: 32px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.name{
+    font-family: DangLap-font-semibold;
+    color: #424242;
+    margin-right: 8px;
+}

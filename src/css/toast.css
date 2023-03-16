@@ -1,0 +1,171 @@
+.toast-message-container{
+    min-width: 450px;
+    height: 56px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.078);
+    display: flex;
+    align-items: center;
+    padding-left: 18px;
+    padding-right: 16px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    justify-content: space-between;
+
+}
+
+.toast-icon{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -512px -408px;
+	width: 16px;
+	height: 16px;
+    margin-right: 10px;
+}
+
+.toast-status{
+    font-size: 14px;
+    color: #50B83C;
+    font-family: DANGLAP-BOLD;
+    margin-right: 10px;
+}
+.toast-text{
+    font-family: DangLap-font;
+    color: #1F1F1F;
+    font-size: 14px;
+}
+@font-face {
+    font-family: DANGLAP-BOLD;
+    src: url(../assets/fonts/notosans-bold.3ede5aff.woff2);
+}
+
+@font-face {
+    font-family: DangLap-font;
+    src: url(../assets/fonts/notosans-regular.2cb88a13.woff2);
+}
+
+@font-face {
+    font-family: DangLap-font-semi;
+    src: url(../assets/fonts/notosans-semibold.df3e6dc4.woff2);
+} 
+
+.toast-left{
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.toast-right{
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.undo-text{
+    text-decoration: underline;
+    font-family: DangLap-font-semi;
+    font-size: 14px;
+    color: #1F1F1F;
+    margin-right: 16px;
+}
+
+.close-button{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -147px -147px;
+	width: 18px;
+	height: 18px;
+    transform: translate(-50% -50%);
+    cursor: pointer;
+    scale: 0.8;
+}
+
+label{
+    font-family: DangLap-font;
+
+}
+
+input::placeholder{
+    font-family: DangLap-font;
+
+}
+
+.popup-warning{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 4px;
+    min-height: 173px;
+    min-width: 500px;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border-radius: 4px;
+    border: 1px solid rgba(23,27,42,0.24);
+    z-index: 999;
+}
+
+.popup-warning__header{
+    width: 100%;
+    display: flex;
+    align-self: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.popup-warning__header__title{
+    font-family: DANGLAP-BOLD;
+    font-size: 24px;
+    color: #1F1F1F;
+}
+
+.popup-warning__body{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-direction: row;
+}
+
+.warning-icon{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -538px -146px;
+	width: 20px;
+	height: 20px;
+    margin-right: 6px;
+}
+
+.warning-text{
+    font-family: DangLap-font;
+    font-size: 14px;
+    color: #1F1F1F;
+    font-weight: 400;
+}
+
+.popup-warning__footer{
+    width: 100%;
+    min-height: 36px;
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.popup-group-btn{
+    height: 100%;
+    display: flex;
+    column-gap: 8px;
+    font-family: DangLap-font;
+}
+
+.red{
+    background-color: #DE3617;
+}
+
+.btn-close-popup{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -147px -147px;
+	width: 18px;
+	height: 18px;
+    position: absolute;
+    top: 4px;
+    right: 0;
+    cursor: pointer;
+}

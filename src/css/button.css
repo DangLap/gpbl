@@ -1,0 +1,78 @@
+.button {
+    height: 36px;
+    border: unset;
+    background-color: #50B83C;
+    border-radius: 4px;
+    font-family: DangLap-font;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-left: 16px;
+    padding-right: 16px;
+    cursor: pointer;
+    min-width: 80px;
+    text-align: center;
+}
+
+.btn-second {
+    height: 36px;
+    border-radius: 4px;
+    padding: 8px 16px 9px 16px;
+    min-width: 80px;
+    font-size: 14px;
+    border: 1px solid #E0E0E0;
+    text-align: center;
+    cursor: pointer;
+    background-color: #ffffff;
+}
+
+.btnPaging{
+    width: 24px;
+    height: 23px;
+    border-radius: 4px;
+    border: unset;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.btnPaging + .btnPaging{
+    margin-left: 8px;
+    margin-right: 16px;
+}
+
+#btnPre{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -36px -361px;
+	width: 8px;
+	height: 14px;
+}
+
+#btnPre:hover{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -36px -409px;
+	width: 8px;
+	height: 14px;
+}
+
+#btnNext{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -84px -361px;
+	width: 8px;
+	height: 14px;
+}
+
+.btnPreDisable{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -36px -409px !important;
+	width: 8px;
+	height: 14px;
+}
+
+#btnNext:hover{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -84px -409px;
+	width: 8px;
+	height: 14px;
+}

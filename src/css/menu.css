@@ -1,0 +1,167 @@
+
+
+.menu {
+    width: 200px;
+    height: 100vh;
+    background-color: #00201B;
+    float: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu__top {
+    width: 100%;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    background-color: #00201B;
+}
+
+.menu__top__icon-contain {
+    width: 180px;
+    height: 36px;
+    display: flex;
+    flex-direction: row;
+    margin-left: 16px;
+    align-items: center;
+    column-gap: 16px;
+}
+
+.menu__top__icon__item {
+
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -428px -92px;
+    width: 16px;
+    height: 16px;
+}
+
+.menu__top__icon__logo {
+    height: 32px;
+    width: 108px;
+    ;
+}
+
+.img-logo {
+    width: 108px;
+    height: 32px;
+}
+
+.sidebar {
+    width: 200px;
+    height: calc(100vh - 56px);
+    background-color: #393a3d;
+    padding: 0px 0px 20px 0px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 4px;
+    overflow-y: auto;
+}
+
+.sidebar__item {
+    width: 100%;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.sidebar__item:hover {
+    background-color: #b5b9cedb;
+}
+
+.sidebar__item__img {
+    margin: 13px 15px 13px 15px;
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -33px -1587px;
+    width: 18px;
+    height: 24px;
+}
+
+.one{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -78px -1588px;
+	width: 14px;
+	height: 18px;
+}
+
+.two{
+    background: url('../assets/img/Sprites.64af8f61.svg')no-repeat -121px -1590px;
+	width: 16px;
+	height: 16px;
+}
+
+.three{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -165px -1589px;
+	width: 16px;
+	height: 18px;
+}
+
+.four{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -206px -1588px;
+	width: 20px;
+	height: 18px;
+}
+
+.five{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -254px -1589px;
+	width: 14px;
+	height: 17px;
+}
+
+.six{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -294px -1589px;
+	width: 18px;
+	height: 17px;
+}
+
+.seven{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -339px -1590px;
+	width: 18px;
+	height: 17px;
+}
+
+.eight{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -382px -1589px;
+	width: 17px;
+	height: 18px;
+}
+
+.nine{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -427px -1591px;
+	width: 16px;
+	height: 16px;
+}
+
+.ten{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -471px -1590px;
+	width: 17px;
+	height: 17px;
+}
+
+.eleven{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -514px -1590px;
+	width: 15px;
+	height: 16px;
+}
+
+.twelve{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -552px -1593px;
+	width: 14px;
+	height: 13px;
+}
+
+.thirteen{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -592px -1588px;
+	width: 23px;
+	height: 18px;
+}
+
+.fourteen{
+    background: url('../assets/img/Sprites.64af8f61.svg') no-repeat -636px -1588px;
+	width: 19px;
+	height: 18px;
+}
+
+
+.sidebar__item__Text {
+    font-size: 14px;
+    color: #FFFFFF;
+    margin: 13px 0 13px 0;
+}

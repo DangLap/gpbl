@@ -1,0 +1,50 @@
+/*
+*Các dạng selevtor trong css
+    1. Element selector
+    2. Id selector
+    3. Class selector
+    4. group selector: các nhau bằng dấu phẩy
+    5. Định nghĩa css cho tất cả các con, cháu: dấu cách
+    6. Chỉ dánh cho các con: dấu lớn hơn
+    7. Định nghĩa css cho phần tử liền kề phía sau: dấu cộng (div#abc+div.def)
+    div[id = "misa'] = #misa
+
+    tự chuyển thành 3 chấm: 
+        white-space :  no-wrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 50px;
+
+
+        transform: translate (-50%, 50%);
+    */
+@import url(../css/header.css);
+@import url(../css/menu.css);
+@import url(../css/main.css);
+@import url(../css/button.css);
+@import url(../css/text-field.css);
+@import url(../css/../css/dropdown-list.css);
+@import url(../css/form.css);
+@import url(../css/toast.css);
+@import url(../css/lcombobox.css);
+
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    font-family: DangLap-font;
+}
+
+@font-face {
+    font-family: DangLap-font;
+    src: url(../assets/fonts/Roboto/Roboto-Regular.ttf);
+}
+
+@font-face {
+    font-family: DangLap-font-semibold;
+    src: url(../assets/fonts/Roboto/Roboto-Medium.ttf);
+}
+
