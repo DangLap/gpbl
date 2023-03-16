@@ -416,7 +416,7 @@ export default {
     /**
      * Sự kiện ấn nút thêm mới sẽ hiện form chi tiết nhân viên
      ** author: DTLap (01/03)
-     *
+     *0
      */
     btnAddOnClick() {
       this.isShowPopupDetail = true;
