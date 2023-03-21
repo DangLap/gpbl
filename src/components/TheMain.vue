@@ -56,24 +56,28 @@
               <tr
                 class="table__row"
                 v-for="item in employeeList"
-                :key="item.officerID"
-                @dblclick="rowEdit(item)"
+                :key="item.employeeId"
+                @dblclick="rowEdit(item.employeeId)"
               >
                 <CheckBoxRow></CheckBoxRow>
-                <td class="id">{{ item.officerCode }}</td>
+                <td class="id">{{ item.employeeCode }}</td>
                 <td class="full-name">{{ item.fullName }}</td>
                 <td class="gender">Nam</td>
                 <td class="dob">01/12/2001</td>
-                <td class="national-id">001201012571</td>
-                <td class="position">Chưa có</td>
+                <td class="national-id">{{ item.nationalID }}</td>
+                <td class="position">{{ item.position }}</td>
                 <td class="department">{{ item.groupName }}</td>
-                <td class="account"></td>
-                <td class="bank">Ngân hàng Á Châu - ACB</td>
-                <td class="bank-branch">ACB Hà Thành</td>
+                <td class="account">{{ item.bankAccount }}</td>
+                <td class="bank">{{ item.bankName }}</td>
+                <td class="bank-branch">{{ item.bankBranch }}</td>
                 <td class="func_item">
                   <div class="edit-field">
-                    <div class="btn-edit" @click="rowEdit(item)">Sửa</div>
-                    <div class="edit-chevron" id="chevronEdit" @click="openContextMenu($event)"></div>
+                    <div class="btn-edit" @click="rowEdit(item.employeeId)">Sửa</div>
+                    <div
+                      class="edit-chevron"
+                      id="chevronEdit"
+                      @click="openContextMenu($event, item.employeeId)"
+                    ></div>
                     <div
                       class="dropdown-region"
                       id="edit"
@@ -92,7 +96,10 @@
           </div>
           <div class="paging-right">
             <div class="pageSizeText">Số bản ghi/Trang</div>
-            <div class="pagesize-dropdown paging-margin"  @click="pagingChevronOnClick"> 
+            <div
+              class="pagesize-dropdown paging-margin"
+              @click="pagingChevronOnClick"
+            >
               <div
                 class="pagesize-dropdown__text"
                 id="pageSize"
@@ -100,11 +107,7 @@
               >
                 {{ pageSize }}
               </div>
-              <div
-                class="pagesize-dropdown__chevron"
-                id="chevronPaging"
-               
-              ></div>
+              <div class="pagesize-dropdown__chevron" id="chevronPaging"></div>
               <div
                 class="dropdown-container"
                 id="pagingDropdown"
@@ -150,7 +153,7 @@
     <PopupDetail
       @CloseButtonOnClick="closeForm"
       v-if="isShowPopupDetail"
-      :employeeSelectedRow="employeeSelected"
+      :employeeSelectedRow="employeeSelectedID"
       :formMode="isFormAdd"
     ></PopupDetail>
 
@@ -188,6 +191,37 @@
       </div>
     </div>
 
+    <div
+      class="popup-warning"
+      id="popupDeleteWarning"
+      v-show="isShowDeleteDialog"
+    >
+      <div class="popup-warning__header">
+        <div class="popup-warning__header__title">
+          {{ Resource.dialog.DialogTitleDeleteForm }}
+        </div>
+        <div class="btn-close-popup" id="btnClosePopUp"></div>
+      </div>
+      <div class="popup-warning__body" id="requiredText">
+        <div class="warning-icon"></div>
+        <div class="warning-text">
+          {{ Resource.dialog.DialogTextDeleteForm }}
+        </div>
+      </div>
+      <div class="popup-warning__footer">
+        <div class="popup-group-btn">
+          <div class="button red" id="btnDelete" @click="deleteComfirm">Đồng ý</div>
+          <div
+            class="btn-second"
+            id="btnCloseDialog"
+            @click="btnCloseDeleteDialogOnClick"
+          >
+            Đóng
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="loading" id="loading" v-show="isLoading">
       <div class="loading__icon"></div>
       <div class="loading__text">Đang xử lý</div>
@@ -208,18 +242,37 @@
         <div class="close-button"></div>
       </div>
     </div>
+
+    <div
+    v-show="isShowDeleteSuccessToast"
+      class="toast-message-container"
+    >
+      <div class="toast-left">
+        <div class="toast-icon"></div>
+        <div class="toast-status">{{ Resource.toast.ToastTitle }}</div>
+        <div class="toast-text">{{ Resource.toast.ToastDeleteSuccessText }}</div>
+      </div>
+      <div class="toast-right">
+        <div class="undo-text">Hoàn tác</div>
+        <div class="close-button"></div>
+      </div>
+    </div>
   </div>
 
-  <div class="editbox" :style="{top: coordinate.y + 'px', left: coordinate.x + 'px'}"  v-show="isShowContextMenu">
+  <div
+    class="editbox"
+    :style="{ top: coordinate.y + 'px', left: coordinate.x + 'px' }"
+    v-show="isShowContextMenu"
+  >
     <div class="editbox__item" @click="editBoxItemOnClick">Nhân bản</div>
-    <div class="editbox__item" @click="editBoxItemOnClick">Xóa</div>
+    <div class="editbox__item" @click="openDialogDelete">Xóa</div>
     <div class="editbox__item" @click="editBoxItemOnClick">Ngưng sử dụng</div>
-
   </div>
 </template>
 
 
 <script>
+import Resource from "@/Js/Resource";
 import CheckBoxRow from "./Base/BaseCheckBoxRow.vue";
 import CheckBox from "./Base/BaseCheckBox.vue";
 import PopupDetail from "./PopupDetail.vue";
@@ -236,10 +289,11 @@ export default {
   },
   data() {
     return {
+      Resource: Resource,
       isShowPopupDetail: false,
       employeeList: [],
-      baseAPI: "http://localhost:38703/api/Officers/",
-      employeeSelected: {},
+      baseAPI: "https://localhost:7252/api/v1/Employees",
+      employeeSelectedID: "",
       isFormAdd: true,
       isShowPagingDropDown: false,
       pageSize: 20,
@@ -252,30 +306,77 @@ export default {
       keyWord: "",
       isChecked: false,
       isShowContextMenu: false,
-      coordinate: {y: -1000,x: -2000}
-      
+      coordinate: { y: -1000, x: -2000 },
+      isShowDeleteDialog: false,
+      selectedDeleteEmployeeID: "",
+      isShowDeleteSuccessToast: false,
     };
   },
   methods: {
     /**
+     * Sự kiện xóa và đóng form Xác nhận xóa
+     */
+     deleteComfirm(){
+      axios
+        .delete(
+          `https://localhost:7252/api/v1/Employees/${this.selectedDeleteEmployeeID}`
+        )
+        .then((response) => {
+          console.log(response);
+          this.renderData();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      this.isShowDeleteDialog = false;
+      this.isShowDeleteSuccessToast = true;
+      setTimeout(this.setDeleteSuccessToastOff , 3000);
+     },
+
+     /**
+      * Tắt toast xóa thành công
+      */
+     setDeleteSuccessToastOff(){
+      this.isShowDeleteSuccessToast = false
+     },
+
+    /**
+     * Sự kiện mở dialog xóa
+     */
+    openDialogDelete() {
+      this.isShowDeleteDialog = true;
+      this.isShowContextMenu = false;
+    },
+
+    /**
+     * Sự kiện Đóng dialog xóa
+     * author: DTLap (09/03)
+     */
+
+    btnCloseDeleteDialogOnClick() {
+      this.isShowDeleteDialog = false;
+      this.selectedDeleteEmployeeID = "";
+    },
+
+    /**
      * Sự kiện khi click vào item trong context Menu
      * author: DTLap (09/03)
      */
-     editBoxItemOnClick(){
+    editBoxItemOnClick() {
       this.isShowContextMenu = false;
-     },
+    },
 
     /**
      * Sự kiện mở ra context menu:
      * author: DTLap (09/03)
      */
-     openContextMenu(e){
-     let {x,y} = e.target.getBoundingClientRect();
-      console.log({x,y});
-      this.isShowContextMenu = true
+    openContextMenu(e, Id) {
+      let { x, y } = e.target.getBoundingClientRect();
+      this.isShowContextMenu = true;
       this.coordinate.x = x - 90;
       this.coordinate.y = y + 10;
-     },
+      this.selectedDeleteEmployeeID = Id;
+    },
 
     /**
      * Sự kiện khi click vào checkbox
@@ -293,20 +394,14 @@ export default {
       this.isLoading = true;
       axios
         .get(
-          this.baseAPI +
-            "filter?" +
-            "keyword=" +
-            this.keyWord +
-            "&pageSize=" +
-            this.pageSize +
-            "&pageNumber=" +
-            this.pageNumber
+          `https://localhost:7252/api/v1/Employees?keyWord=${this.keyWord}&pageSize=${this.pageSize}&pageNumber=${this.pageNumber}`
         )
         .then((response) => {
-          this.employeeList = response.data.dataOfficers;
-          this.totalPage =
-            Math.round(response.data.totalCount / this.pageSize) + 1;
-          this.totalCount = response.data.totalCount;
+          console.log(response);
+          this.employeeList = response.data.data;
+          console.log(this.employeeList);
+          this.totalPage = Math.ceil(response.data.totalRecord / this.pageSize);
+          this.totalCount = response.data.totalRecord;
           this.isLoading = false;
         })
         .catch((error) => {
@@ -378,17 +473,14 @@ export default {
       this.isLoading = true;
       axios
         .get(
-          this.baseAPI +
-            "filter?pageSize=" +
-            this.pageSize +
-            "&pageNumber=" +
-            this.pageNumber
+          `https://localhost:7252/api/v1/Employees?pageSize=${this.pageSize}&pageNumber=${this.pageNumber}`
         )
         .then((response) => {
-          this.employeeList = response.data.dataOfficers;
-          this.totalPage =
-            Math.round(response.data.totalCount / this.pageSize) + 1;
-          this.totalCount = response.data.totalCount;
+          console.log(response);
+          this.employeeList = response.data.data;
+          console.log(this.employeeList);
+          this.totalPage = Math.ceil(response.data.totalRecord / this.pageSize);
+          this.totalCount = response.data.totalRecord;
           this.isLoading = false;
         })
         .catch((error) => {
@@ -401,12 +493,11 @@ export default {
      ** author: DTLap (01/03)
      *
      */
-    rowEdit(item) {
+    rowEdit(itemID) {
       try {
         this.isShowPopupDetail = true;
-        this.employeeSelected = item;
+        this.employeeSelectedID = itemID;
         this.isFormAdd = false;
-        console.log(this.employeeSelected);
         //Lập đẹp trai
       } catch (error) {
         console.log(error);

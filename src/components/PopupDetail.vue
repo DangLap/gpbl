@@ -51,7 +51,7 @@
                 id="txtDepartment"
                 tabindex="3"
                 class="lap_input-info"
-                v-model="employee.department"
+                v-model="employee.departmentId"
                 :class="{ 'input--red': isErrorTxtDepartment }"
                 :title="tooltipDepartment"
                 @blur="inputTxtDepartmentOnBlur"
@@ -66,6 +66,7 @@
                 id="txPosition"
                 tabindex="4"
                 class="lap_input-info"
+                v-model="employee.position"
               />
             </div>
           </div>
@@ -80,6 +81,7 @@
                 tabindex="5"
                 class="lap_input-info"
                 style="text-transform: uppercase"
+                v-model="employee.dateOfBirth"
               />
             </div>
             <div class="lap_input-field flex-1">
@@ -126,6 +128,7 @@
                 id="nationID"
                 type="text"
                 class="lap_input-info"
+                v-model="employee.nationalID"
               />
             </div>
             <div class="lap_input-field lap_flex-1">
@@ -146,6 +149,7 @@
                 type="text"
                 tabindex="9"
                 class="lap_input-info"
+                v-model="employee.grantedPlace"
               />
             </div>
           </div>
@@ -181,7 +185,7 @@
                 type="text"
                 tabindex="12"
                 class="lap_input-info"
-                v-model="employee.fixedNumber"
+                v-model="employee.fax"
                 :class="{ 'input--red': isErrorTxtFixedNumber }"
                 :title="tooltipFixedNumber"
               />
@@ -224,7 +228,7 @@
                 type="text"
                 tabindex="16"
                 class="lap_input-info"
-                v-model="employee.bankbranch"
+                v-model="employee.bankBranch"
               />
             </div>
           </div>
@@ -282,9 +286,10 @@ export default {
       this.formTitle = "Thêm mới nhân viên";
     } else {
       this.formTitle = "Sửa thông tin nhân viên";
+      this.getEmployeeInfomation();
     }
-    this.employee = this.employeeSelectedRow;
-    this.employee.employeeCode = this.employee.officerCode;
+    console.log(this.employeeSelectedRow);
+    // this.employee.employeeCode = this.employee.employeeCode;
     // this.employee.department = this.employee.storageRoomName;
   },
 
@@ -293,6 +298,32 @@ export default {
   },
 
   methods: {
+    /**
+     * Sự kiện lấy thông tin nhân viên được chọn để hiển thị lên trang form
+     */
+    getEmployeeInfomation() {
+      axios
+        .get(
+          `https://localhost:7252/api/v1/Employees/${this.employeeSelectedRow}`
+        )
+        .then((response) => {
+          console.log(response);
+          this.employee = response.data;
+          let dob = new Date(this.employee.dateOfBirth)
+            .toISOString()
+            .substring(0, 10);
+          this.employee.dateOfBirth = dob;
+
+          let formatGrantedDate = new Date(this.employee.grantedDate)
+            .toISOString()
+            .substring(0, 10);
+          this.employee.grantedDate = formatGrantedDate;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+
     /**
      * Sự kiện khi blur trường input mã nhân viên
      * author: DTLap (01/03)
@@ -314,7 +345,7 @@ export default {
      */
     getNewCode() {
       axios
-        .get("http://localhost:38703/api/Officers/newCode")
+        .get("https://localhost:7252/api/v1/Employees/new-code")
         .then((response) => {
           console.log(response.data);
           this.employee.employeeCode = response.data;
@@ -364,6 +395,8 @@ export default {
      */
     btnClosePopupDetailOnClick() {
       this.$emit("CloseButtonOnClick");
+      //Testttttcajscbkadbcjabvkjsbvkdabv kusbksbkjabsnlidnildjv isd sdj dslinkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
+      // console.log(this.employee.grantedDate);
     },
 
     /**
@@ -377,10 +410,24 @@ export default {
 
       let employeeCode = this.employee.employeeCode;
       let fullName = this.employee.fullName;
-      let department = this.employee.department;
+      let department = this.employee.departmentId;
       let email = this.employee.email;
       let phoneNumber = this.employee.phoneNumber;
       let fixedNum = this.employee.fixedNumber;
+
+      //format dữ liệu ngày tháng
+      // let granted = new Date(this.employee.grantedDate);
+      // let day = granted.getDate();
+      // let month = granted.getMonth() + 1;
+      // let year = granted.getFullYear();
+      // if (day < 10) {
+      //   day = "0" + day;
+      // }
+      // if (month < 10) {
+      //   month = `0${month}`;
+      // }
+      // let format4 = day + "-" + month + "-" + year;
+      // this.employee.grantedDate = format4;
 
       // this.employeeInsert.officerCode = this.employeeCode;
       // this.employeeInsert.fullName = this.fullName;
@@ -433,7 +480,7 @@ export default {
         //Nếu là thêm mới thì sẽ gọi đến api thêm mới:
         if (this.formMode == true) {
           axios
-            .post("http://localhost:38703/api/Officers", this.employee)
+            .post("https://localhost:7252/api/v1/Employees", this.employee)
             .then((response) => {
               console.log(response);
               this.successText = "Thêm mới thành công";
