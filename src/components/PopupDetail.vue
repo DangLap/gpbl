@@ -45,8 +45,10 @@
           </div>
           <div class="lap_popup-row">
             <div class="lap_input-field lap_flex-1">
-              <div class="lap_label">Đơn vị</div>
-              <input
+              <div class="lap_label">
+                Đơn vị <span class="required">*</span>
+              </div>
+              <!-- <input
                 type="text"
                 id="txtDepartment"
                 tabindex="3"
@@ -55,7 +57,18 @@
                 :class="{ 'input--red': isErrorTxtDepartment }"
                 :title="tooltipDepartment"
                 @blur="inputTxtDepartmentOnBlur"
-              />
+              /> -->
+              <MCombobox
+                :error="isErrorTxtDepartment"
+                :valueDefault="employee.departmentId"
+                :propTabIndex="3"
+                :data="[]"
+                api="https://localhost:7252/api/Departments"
+                propText="DepartmentName"
+                propValue="DepartmentId"
+                v-model="employee.departmentId"
+              >
+              </MCombobox>
             </div>
           </div>
           <div class="lap_popup-row">
@@ -81,7 +94,7 @@
                 tabindex="5"
                 class="lap_input-info"
                 style="text-transform: uppercase"
-                v-model="employee.dateOfBirth"
+                :value="convertDateTime(employee.dateOfBirth)"
               />
             </div>
             <div class="lap_input-field flex-1">
@@ -94,6 +107,8 @@
                     name="gender"
                     id="male"
                     class="lap_radio"
+                    value="0"
+                    v-model="employee.gender"
                   />
                   <label for="male">Nam</label>
                 </div>
@@ -103,6 +118,9 @@
                     name="gender"
                     id="female"
                     class="lap_radio"
+                    value="1"
+                    v-model="employee.gender"
+                    tabindex="7"
                   />
                   <label for="female">Nữ</label>
                 </div>
@@ -112,6 +130,9 @@
                     name="gender"
                     id="other"
                     class="lap_radio"
+                    value="2"
+                    tabindex="8"
+                    v-model="employee.gender"
                   />
                   <label for="other">Khác</label>
                 </div>
@@ -124,7 +145,7 @@
                 Số CMND
               </div>
               <input
-                tabindex="7"
+                tabindex="9"
                 id="nationID"
                 type="text"
                 class="lap_input-info"
@@ -135,10 +156,10 @@
               <div class="lap_label">Ngày cấp</div>
               <input
                 type="date"
-                tabindex="8"
+                tabindex="10"
                 class="lap_input-info"
                 style="text-transform: uppercase"
-                v-model="employee.grantedDate"
+                :value="convertDateTime(employee.grantedDate)"
               />
             </div>
           </div>
@@ -147,7 +168,7 @@
               <div class="lap_label">Nơi cấp</div>
               <input
                 type="text"
-                tabindex="9"
+                tabindex="11"
                 class="lap_input-info"
                 v-model="employee.grantedPlace"
               />
@@ -160,7 +181,7 @@
               <div class="lap_label">Địa chỉ</div>
               <input
                 type="text"
-                tabindex="10"
+                tabindex="12"
                 class="lap_input-info"
                 v-model="employee.address"
               />
@@ -171,7 +192,7 @@
               <div class="lap_label" title="Điện thoại di dộng">ĐT di động</div>
               <input
                 type="text"
-                tabindex="11"
+                tabindex="13"
                 id="txtPhoneNum"
                 class="lap_input-info"
                 v-model="employee.phoneNumber"
@@ -183,7 +204,7 @@
               <div class="lap_label" title="Điện thoại cố định">ĐT cố định</div>
               <input
                 type="text"
-                tabindex="12"
+                tabindex="14"
                 class="lap_input-info"
                 v-model="employee.fax"
                 :class="{ 'input--red': isErrorTxtFixedNumber }"
@@ -194,7 +215,7 @@
               <div class="lap_label">Email</div>
               <input
                 type="text"
-                tabindex="13"
+                tabindex="15"
                 id="txtEmail"
                 class="lap_input-info"
                 v-model="employee.email"
@@ -208,7 +229,7 @@
               <div class="lap_label">Tài khoản ngân hàng</div>
               <input
                 type="text"
-                tabindex="14"
+                tabindex="16"
                 class="lap_input-info"
                 v-model="employee.bankAccount"
               />
@@ -217,7 +238,7 @@
               <div class="lap_label">Tên ngân hàng</div>
               <input
                 type="text"
-                tabindex="15"
+                tabindex="17"
                 class="lap_input-info"
                 v-model="employee.bankName"
               />
@@ -226,7 +247,7 @@
               <div class="lap_label">Chi nhánh</div>
               <input
                 type="text"
-                tabindex="16"
+                tabindex="18"
                 class="lap_input-info"
                 v-model="employee.bankBranch"
               />
@@ -235,17 +256,160 @@
         </div>
       </div>
       <div class="lap_popup__footer">
-        <div class="btn-second" tabindex="19" id="btnClose2">Hủy</div>
+        <div
+          class="btn-second"
+          tabindex="21"
+          id="btnClose2"
+          @click="btnClosePopupDetailOnClick"
+        >
+          Hủy
+        </div>
         <div class="lap_group-btn-right">
           <div
             class="btn-second tabindex2"
-            tabindex="17"
+            tabindex="19"
             id="btnSave"
             @click="btnSaveOnClick"
           >
             Cất
           </div>
-          <div class="button" tabindex="18">Cất và Thêm</div>
+          <div
+            class="button"
+            tabindex="20"
+            @click="btnSaveAndNewOnClick"
+            v-if="isShowAddAndnewButton"
+          >
+            Cất và Thêm
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------- -->
+    <div
+      class="popup-warning"
+      id="popupDeleteWarning"
+      v-show="isShowOnChangeDialog"
+    >
+      <div class="popup-warning__header">
+        <div class="popup-warning__header__title">
+          {{ Resource.dialog.DialogTitleFormChange }}
+        </div>
+        <div class="btn-close-popup" id="btnClosePopUp"></div>
+      </div>
+      <div class="popup-warning__body" id="requiredText">
+        <div class="warning-icon"></div>
+        <div class="warning-text">
+          {{ Resource.dialog.DialogTextFormChange }}
+        </div>
+      </div>
+      <div class="popup-warning__footer">
+        <div class="popup-group-btn">
+          <div
+            class="btn-second"
+            id="btnCloseDialog"
+            @click="btnCloseDialogOnClick"
+          >
+            Đóng
+          </div>
+          <div class="btn-second" @click="closePopUp">Không lưu</div>
+          <div class="button" id="btnDelete" @click="btnSaveOnClick">Lưu</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------------------- -->
+    <div class="popup-warning" v-if="isShowValidateWarning">
+      <div class="popup-warning__header">
+        <div class="popup-warning__header__title">Cảnh báo</div>
+        <div
+          class="btn-close-popup"
+          id="btnClosePopUp"
+          @click="btnCloseDeleteMultipleDialogOnClick"
+        ></div>
+      </div>
+      <div
+        class="popup-warning__body warning"
+        id="requiredText"
+        v-if="isErrorTxtFullName"
+      >
+        <div class="warning-icon"></div>
+        <div class="warning-text">Bạn chưa nhập Họ và Tên</div>
+      </div>
+      <div
+        class="popup-warning__body warning"
+        id="requiredText"
+        v-if="isErrorTxtDepartment"
+      >
+        <div class="warning-icon"></div>
+        <div class="warning-text">Bạn chưa nhập Tên đơn vị</div>
+      </div>
+      <div
+        class="popup-warning__body warning"
+        id="requiredText"
+        v-if="isErrorTxtPhoneNumber"
+      >
+        <div class="warning-icon"></div>
+        <div class="warning-text">
+          Bạn nhập sai định dạng số điện thoại di động
+        </div>
+      </div>
+      <div
+        class="popup-warning__body warning"
+        id="requiredText"
+        v-if="isErrorTxtFixedNumber"
+      >
+        <div class="warning-icon"></div>
+        <div class="warning-text">
+          Bạn nhập sai định dạng số điện thoại cố định
+        </div>
+      </div>
+      <div
+        class="popup-warning__body warning"
+        id="requiredText"
+        v-if="isErrorTxtEmail"
+      >
+        <div class="warning-icon"></div>
+        <div class="warning-text">Bạn nhập sai định dạng Email</div>
+      </div>
+      <div class="popup-warning__footer">
+        <div class="popup-group-btn">
+          <div
+            class="btn-second"
+            id="btnCloseDialog"
+            @click="btnCloseValidatePopup"
+          >
+            Đóng
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- --------------------------pop-up__response---------------------------------------- -->
+    <div class="popup-warning" v-if="isShowPopupResponse">
+      <div class="popup-warning__header">
+        <div class="popup-warning__header__title">Cảnh báo</div>
+        <div
+          class="btn-close-popup"
+          id="btnClosePopUp"
+          @click="btnClosePopupResponseOnClick"
+        ></div>
+      </div>
+      <div class="popup-warning__body warning" id="requiredText">
+        <div class="warning-icon"></div>
+        <div class="warning-text">
+          {{ popupResponse }}
+        </div>
+      </div>
+      <div class="popup-warning__footer">
+        <div class="popup-group-btn">
+          <div
+            class="btn-second"
+            id="btnCloseDialog"
+            @click="btnClosePopupResponseOnClick"
+          >
+            Đóng
+          </div>
         </div>
       </div>
     </div>
@@ -254,13 +418,19 @@
 
 <script>
 import axios from "axios";
+import Resource from "@/Js/Resource";
 export default {
+  components: {},
   name: "PopupDetail",
   props: ["employeeSelectedRow", "formMode"],
 
   data() {
     return {
-      employee: {},
+      popupResponse: "",
+      isShowPopupResponse: false,
+      employee: {
+        gender: 2,
+      },
       isErrorTxtEmployeeCode: false,
       isErrorTxtFullName: false,
       isErrorTxtDepartment: false,
@@ -277,27 +447,114 @@ export default {
       formTitle: "",
       employeeInsert: {},
       isShowPopUpWaring: false,
+      newEmployeeCode: "",
+      isShowAddAndnewButton: true,
+      oldValueString: "",
+      isShowOnChangeDialog: false,
+      Resource: Resource,
+      isShowValidateWarning: false,
+      turnGreen: false,
     };
   },
 
-  created() {
-    if (this.formMode) {
+  async created() {
+    if (this.formMode == "Add") {
       this.getNewCode();
       this.formTitle = "Thêm mới nhân viên";
-    } else {
+    } else if (this.formMode == "Edit") {
       this.formTitle = "Sửa thông tin nhân viên";
       this.getEmployeeInfomation();
+      this.isShowAddAndnewButton = false;
+    } else if (this.formMode == "Dupplicate") {
+      await this.getEmployeeInfomation();
+      await this.getNewCode();
+      this.formTitle = "Nhân bản thông tin nhân viên";
+      this.isShowAddAndnewButton = false;
     }
     console.log(this.employeeSelectedRow);
     // this.employee.employeeCode = this.employee.employeeCode;
     // this.employee.department = this.employee.storageRoomName;
   },
+  // watch: {
+  //   employee: {
+  //     handler: function (newInfoEmployee) {
+  //       console.log("Dữ liệu của employee đã thay đổi:", newInfoEmployee.departmentId);
+  //     },
+  //     deep: true
+  //   }
+  // },
+  beforeUpdate() {
+    if (this.formMode == "Dupplicate") {
+      this.isShowAddAndnewButton = false;
+    }
+  },
 
   mounted() {
     this.$el.querySelector("input").focus();
+    if (this.formMode == "Add" || this.formMode == "Dupplicate") {
+      this.getNewCode();
+      this.isShowAddAndnewButton = true;
+    }
   },
 
   methods: {
+    /**
+     * Sự kiện đóng popup cảnh báo
+     */
+    btnCloseDialogOnClick() {
+      this.isShowOnChangeDialog = false;
+    },
+
+    /**
+     * Sự kiện khi bấm nút cất và thêm mới
+     */
+    async btnSaveAndNewOnClick() {
+      if (this.formMode == "Add") {
+        await axios
+          .post("https://localhost:7252/api/v1/Employees", this.employee)
+          .then((response) => {
+            console.log(response);
+            this.$emit("insertSuccess");
+            this.getNewCode();
+            this.$el.querySelector("input").focus();
+          })
+          .catch(async (error) => {
+              // console.log(error);
+              // console.log(error.response.data.userMsg);
+              // this.popupResponse = (await (error)).response.data.userMsg;
+              // this.isShowPopupResponse = true;
+              const promiseA = new Promise((resolve) => {
+                resolve(error);
+              });
+              promiseA
+                .then((data) => {
+                  this.popupResponse = data.response.data.userMsg;
+                  console.log(data.response.data.userMsg);
+                })
+                .then(() => {
+                  this.isShowPopupResponse = true;
+                  console.log("hello", this.popupResponse);
+                });
+            });
+      }
+    },
+
+    /**
+     * Đóng pop up validate
+     */
+    btnCloseValidatePopup() {
+      this.isShowValidateWarning = false;
+    },
+
+    /**
+     * chuyển đổi ngày tháng về đúng định dạng
+     */
+    convertDateTime(i) {
+      if (i) {
+        let dob = new Date(i).toISOString().substring(0, 10);
+        return dob;
+      }
+    },
     /**
      * Sự kiện lấy thông tin nhân viên được chọn để hiển thị lên trang form
      */
@@ -307,17 +564,17 @@ export default {
           `https://localhost:7252/api/v1/Employees/${this.employeeSelectedRow}`
         )
         .then((response) => {
-          console.log(response);
           this.employee = response.data;
-          let dob = new Date(this.employee.dateOfBirth)
-            .toISOString()
-            .substring(0, 10);
-          this.employee.dateOfBirth = dob;
+          this.oldValueString = JSON.stringify(response.data);
+          // let dob = new Date(this.employee.dateOfBirth)
+          //   .toISOString()
+          //   .substring(0, 10);
+          // this.employee.dateOfBirth = dob;
 
-          let formatGrantedDate = new Date(this.employee.grantedDate)
-            .toISOString()
-            .substring(0, 10);
-          this.employee.grantedDate = formatGrantedDate;
+          // let formatGrantedDate = new Date(this.employee.grantedDate)
+          //   .toISOString()
+          //   .substring(0, 10);
+          // this.employee.grantedDate = formatGrantedDate;
         })
         .catch((error) => {
           console.log(error);
@@ -343,13 +600,13 @@ export default {
      * Sự kiện lấy mã nhân viên mới:
      * author: Đặng Thế Lập (02/03)
      */
-    getNewCode() {
-      axios
+    async getNewCode() {
+      await axios
         .get("https://localhost:7252/api/v1/Employees/new-code")
         .then((response) => {
           console.log(response.data);
           this.employee.employeeCode = response.data;
-          this.employee.officerCode = response.data;
+          this.newEmployeeCode = response.data;
         })
         .catch((error) => {
           console.log(error);
@@ -390,24 +647,110 @@ export default {
     },
 
     /**
+     * Sự kiện đóng popup
+     */
+    btnClosePopupResponseOnClick() {
+      this.isShowPopupResponse = false;
+      console.log(this.popupResponse);
+    },
+
+    /**
      * Sự kiện khi click vào nút đóng form
      * author: Đặng Thế Lập
      */
     btnClosePopupDetailOnClick() {
-      this.$emit("CloseButtonOnClick");
+      if (this.oldValueString != JSON.stringify(this.employee)) {
+        this.isShowOnChangeDialog = true;
+      } else {
+        this.closePopUp();
+      }
       //Testttttcajscbkadbcjabvkjsbvkdabv kusbksbkjabsnlidnildjv isd sdj dslinkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
       // console.log(this.employee.grantedDate);
+    },
+
+    //Đóng popup
+    closePopUp() {
+      this.$emit("CloseButtonOnClick");
+      this.isShowOnChangeDialog = false;
     },
 
     /**
      * Sự kiện khi nhấn vào nút cất
      * author: Đặng Thế Lập
      */
-    btnSaveOnClick() {
-      /**
-       * Lấy ra dữ liệu ở các ô input:
-       */
+    async btnSaveOnClick() {
+      this.validate();
+      console.log(this.employeeInsert);
+      //Nếu validate không bị lỗi thì gọi đến api:
+      if (!this.isShowValidateWarning) {
+        //Nếu là thêm mới thì sẽ gọi đến api thêm mới:
+        if (this.formMode == "Add") {
+          await axios
+            .post("https://localhost:7252/api/v1/Employees", this.employee)
+            .then((response) => {
+              console.log(response);
+              this.successText = "Thêm mới thành công";
+              this.$emit("insertSuccess");
+              this.$emit("CloseButtonOnClick");
+            })
+            .catch(async (error) => {
+              // console.log(error);
+              // console.log(error.response.data.userMsg);
+              // this.popupResponse = (await (error)).response.data.userMsg;
+              // this.isShowPopupResponse = true;
+              const promiseA = new Promise((resolve) => {
+                resolve(error);
+              });
+              promiseA
+                .then((data) => {
+                  this.popupResponse = data.response.data.userMsg;
+                  console.log(data.response.data.userMsg);
+                })
+                .then(() => {
+                  this.isShowPopupResponse = true;
+                  console.log("hello", this.popupResponse);
+                });
+            });
+        }
+        //Hoặc gọi đến api sửa:
+        else if (this.formMode == "Edit") {
+          console.log(this.employee);
+          axios
+            .put("https://localhost:7252/api/v1/Employees", this.employee)
+            .then((response) => {
+              console.log(response);
+              this.successText = "Sửa thành công";
+              this.$emit("CloseButtonOnClick");
+              this.$emit("updateSuccess");
+              this.employee = [];
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        } else {
+          console.log(this.employee);
+          // let employeeC = {
+          //   ...this.employee,
+          //   dateOfBirth: this.dateOfBirth ? this.dateOfBirth : null,
+          // };
+          axios
+            .post("https://localhost:7252/api/v1/Employees", this.employee)
+            .then((response) => {
+              console.log(response);
+              this.successText = "Thêm mới thành công";
+              this.$emit("insertSuccess");
+              this.$emit("CloseButtonOnClick");
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        }
+      }
+    },
 
+    validate(){
+    //Đóng pop up
+    this.isShowOnChangeDialog = false;
       let employeeCode = this.employee.employeeCode;
       let fullName = this.employee.fullName;
       let department = this.employee.departmentId;
@@ -440,75 +783,49 @@ export default {
       if (employeeCode == undefined) {
         this.isErrorTxtEmployeeCode = true;
         this.tooltipEmployeeCode = "Bạn chưa nhập Mã nhân viên!";
-        this.isShowPopUpWaring = true;
+        this.isShowValidateWarning = true;
       }
 
       if (fullName == undefined) {
         this.isErrorTxtFullName = true;
         this.tooltipFullName = "Bạn chưa nhập họ và tên!";
-        this.isShowPopUpWaring = true;
+        this.isShowValidateWarning = true;
       }
 
       if (department == undefined) {
         this.isErrorTxtDepartment = true;
         this.tooltipDepartment = "Bạn chưa nhập Đơn vị!";
-        this.isShowPopUpWaring = true;
+        this.isShowValidateWarning = true;
       }
 
       if (!emailRegex.test(email) && email) {
         this.isErrorTxtEmail = true;
         this.tooltipEmail = "Bạn nhập sai định dạng Email!";
-        this.isShowPopUpWaring = true;
+        this.isShowValidateWarning = true;
       }
 
       if (!phoneNumberRegex.test(phoneNumber) && phoneNumber) {
         this.isErrorTxtPhoneNumber = true;
         this.tooltipPhoneNumber = "Bạn nhập sai định dạng Số điện thoại!";
-        this.isShowPopUpWaring = true;
+        this.isShowValidateWarning = true;
       }
 
       if (!phoneNumberRegex.test(fixedNum) && fixedNum) {
         this.isErrorTxtFixedNumber = true;
         this.tooltipFixedNumber =
           "Bạn nhập sai định dạng Số điện thoại cố định!";
-        this.isShowPopUpWaring = true;
+        this.isShowValidateWarning = true;
       }
-      console.log(this.employeeInsert);
-      //Nếu validate không bị lỗi thì gọi đến api:
-      if (!this.isShowPopUpWaring) {
-        console.log(this.employee);
-        //Nếu là thêm mới thì sẽ gọi đến api thêm mới:
-        if (this.formMode == true) {
-          axios
-            .post("https://localhost:7252/api/v1/Employees", this.employee)
-            .then((response) => {
-              console.log(response);
-              this.successText = "Thêm mới thành công";
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-        //Hoặc gọi đến api sửa:
-        else {
-          axios
-            .put(
-              "http://localhost:38703/api/Officers/" + this.employee.officerID,
-              this.employeeInsert
-            )
-            .then((response) => {
-              console.log(response);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        }
-      }
-    },
   },
+
+  },
+
 };
 </script>
 
 <style>
 @import url(../css/employee.css);
+.warning {
+  margin-bottom: 16px !important;
+}
 </style>

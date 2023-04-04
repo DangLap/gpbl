@@ -1,4 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import MCombobox from './components/MCombobox/MCombobox.vue'
 
-createApp(App).mount('#app')
+
+const app = createApp(App);
+app.component("MCombobox",MCombobox);
+app.mount('#app')

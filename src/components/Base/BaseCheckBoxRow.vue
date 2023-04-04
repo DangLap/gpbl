@@ -1,11 +1,9 @@
 <template>
-    <td class="checkbox-cell">
       <div
         class="check-box"
         @click="checkboxOnClick"
         :class="{ active: isChecked }"
       ></div>
-    </td>
   </template>
   <style scoped>
   @import url(../../css/employee.css);
@@ -14,10 +12,16 @@
   <script>
   export default {
       name: "BaseCheckBox",
+      props:["checkRow"],
       data() {
           return {
               isChecked: false,
           }
+      },
+      watch:{
+        checkRow: function(newData){
+            this.isChecked = newData;
+        }
       },
       methods: {
           checkboxOnClick(){

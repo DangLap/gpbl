@@ -73,7 +73,6 @@
     width: 23px;
     height: 23px;
     cursor: pointer;
-    margin-right: 16px;
 }
 
 
@@ -159,6 +158,9 @@ table {
 }
 
 tr:hover td{
+    background-color: #F2F2F2 !important;
+}
+table tbody tr:hover {
     background-color: #F2F2F2;
 }
 
@@ -174,7 +176,6 @@ th {
 td {
     border: 1px solid #e0e0e0;
     cursor: pointer;
-    background-color: #fff;
     height: 48px;
     font-family: DangLap-font;
 }
