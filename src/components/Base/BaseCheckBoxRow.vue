@@ -20,8 +20,12 @@
       },
       watch:{
         checkRow: function(newData){
+            console.log(newData);
             this.isChecked = newData;
         }
+      },
+      mounted() {
+        this.isChecked = this.checkRow
       },
       methods: {
           checkboxOnClick(){

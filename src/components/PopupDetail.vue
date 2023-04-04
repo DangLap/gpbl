@@ -95,6 +95,7 @@
                 class="lap_input-info"
                 style="text-transform: uppercase"
                 :value="convertDateTime(employee.dateOfBirth)"
+                @change="dobOnChange($event)"
               />
             </div>
             <div class="lap_input-field flex-1">
@@ -107,7 +108,7 @@
                     name="gender"
                     id="male"
                     class="lap_radio"
-                    value="0"
+                    :value=0
                     v-model="employee.gender"
                   />
                   <label for="male">Nam</label>
@@ -118,7 +119,7 @@
                     name="gender"
                     id="female"
                     class="lap_radio"
-                    value="1"
+                    :value=1
                     v-model="employee.gender"
                     tabindex="7"
                   />
@@ -130,7 +131,7 @@
                     name="gender"
                     id="other"
                     class="lap_radio"
-                    value="2"
+                    :value=2
                     tabindex="8"
                     v-model="employee.gender"
                   />
@@ -454,6 +455,7 @@ export default {
       Resource: Resource,
       isShowValidateWarning: false,
       turnGreen: false,
+      dateOfBirthInput: null,
     };
   },
 
@@ -489,6 +491,12 @@ export default {
     }
   },
 
+  watch: {
+    dateOfBirthInput: function (newValue) {
+      console.log(newValue);
+    }
+  },
+
   mounted() {
     this.$el.querySelector("input").focus();
     if (this.formMode == "Add" || this.formMode == "Dupplicate") {
@@ -498,6 +506,11 @@ export default {
   },
 
   methods: {
+    dobOnChange(event){
+      this.employee.dateOfBirth = this.convertDateTime(event.target.value);
+      console.log(this.employee.dateOfBirth);
+    },
+
     /**
      * Sự kiện đóng popup cảnh báo
      */
@@ -551,7 +564,7 @@ export default {
      */
     convertDateTime(i) {
       if (i) {
-        let dob = new Date(i).toISOString().substring(0, 10);
+        let dob = i.substring(0,10);
         return dob;
       }
     },

@@ -101,7 +101,8 @@
                 <td class="checkbox-cell fixedCol">
                   <CheckBoxRow
                     @click="checkboxRowOnClick(item.employeeId)"
-                    :checkRow="ischeckAll"
+                    
+                    :checkRow="choosenItemArray.includes(item.employeeId)"
                   ></CheckBoxRow>
                 </td>
                 <td class="id fixedCol">{{ item.employeeCode }}</td>
@@ -552,7 +553,7 @@ export default {
 
     //test
     checkboxAllOnClick() {
-      this.ischeckAllParent = !this.ischeckAllParent;
+      // this.ischeckAllParent = !this.ischeckAllParent;
       this.ischeckAll = !this.ischeckAll;
       if (this.ischeckAll == true) {
         this.choosenItemArray = [];
@@ -962,7 +963,7 @@ export default {
 
 .disable {
   color: #cecece;
-  cursor: default;
+  
 }
 
 /* .disable:hover {
@@ -1028,6 +1029,7 @@ export default {
 
 .disable {
   background-color: #e0e0e0;
+  cursor: not-allowed;
 }
 
 .disableBtnPre {
