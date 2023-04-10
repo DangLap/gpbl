@@ -68,7 +68,7 @@
                 <td class="checkbox-cell checkboxAll">
                   <CheckBoxRow
                     @click="checkboxAllOnClick"
-                    :checkRow="ischeckAllParent"
+                    :checkRow="selectedCurrentIDList.length == pageSize"
                   ></CheckBoxRow>
                 </td>
                 <th class="id">MÃ NHÂN VIÊN</th>
@@ -98,10 +98,10 @@
                 :key="item.employeeId"
                 @dblclick="rowEdit(item.employeeId)"
               >
-                <td class="checkbox-cell fixedCol">
+                <td class="checkbox-cell fixedCol" @dblclick.stop>
                   <CheckBoxRow
                     @click="checkboxRowOnClick(item.employeeId)"
-                    
+                    :check-row2="updateCurrentId(choosenItemArray.includes(item.employeeId)?item.employeeId:undefined,true)"
                     :checkRow="choosenItemArray.includes(item.employeeId)"
                   ></CheckBoxRow>
                 </td>
@@ -117,7 +117,7 @@
                 <td class="account">{{ item.bankAccount }}</td>
                 <td class="bank">{{ item.bankName }}</td>
                 <td class="bank-branch">{{ item.bankBranch }}</td>
-                <td class="func_item fixedCol">
+                <td class="func_item fixedCol" @dblclick="handleDoubleClick" @dblclick.stop>
                   <div class="edit-field">
                     <div class="btn-edit" @click="rowEdit(item.employeeId)">
                       Sửa
@@ -166,23 +166,30 @@
                 <div
                   class="dropdown__item"
                   id="twenty"
-                  @click="pageSizeNumberOnClick(20)"
+                  @click="pageSizeNumberOnClick(15)"
                 >
-                  20
+                  15
                 </div>
                 <div
                   class="dropdown__item"
                   id="thirty"
-                  @click="pageSizeNumberOnClick(30)"
+                  @click="pageSizeNumberOnClick(25)"
                 >
-                  30
+                  25
                 </div>
                 <div
                   class="dropdown__item"
                   id="fourty"
-                  @click="pageSizeNumberOnClick(40)"
+                  @click="pageSizeNumberOnClick(50)"
                 >
-                  40
+                  50
+                </div>
+                <div
+                  class="dropdown__item"
+                  id="fourty"
+                  @click="pageSizeNumberOnClick(100)"
+                >
+                  100
                 </div>
               </div>
             </div>
@@ -215,6 +222,7 @@
       v-if="isShowPopupDetail"
       :employeeSelectedRow="employeeSelectedID"
       :formMode="isFormAdd"
+      
     ></PopupDetail>
 
     <div class="popup-warning" id="popupWarning" style="display: none">
@@ -338,7 +346,6 @@
         <div class="toast-text">Cất thành công.</div>
       </div>
       <div class="toast-right">
-        <div class="undo-text">Hoàn tác</div>
         <div class="close-button"></div>
       </div>
     </div>
@@ -352,7 +359,6 @@
         </div>
       </div>
       <div class="toast-right">
-        <div class="undo-text">Hoàn tác</div>
         <div class="close-button"></div>
       </div>
     </div>
@@ -400,7 +406,7 @@ export default {
       employeeSelectedID: "",
       isFormAdd: "",
       isShowPagingDropDown: false,
-      pageSize: 20,
+      pageSize: 50,
       pageNumber: 1,
       isDisablePre: false,
       isDisableNext: false,
@@ -426,9 +432,22 @@ export default {
       isShowDeleteMultipleDialog: false,
       isDisablePreBtn: false,
       isDisableNextBtn: false,
+      isProcessingDoubleClick: false,
+      listEmployeeIDPage: [],
+      selectedCurrentIDList: [],
     };
   },
   watch: {
+    // selectedCurrentIDList: function(val) {
+    //   console.log(val.length)
+    //   if(val.length != this.pageSize)
+    //   {
+    //     this.ischeckAll = false
+    //   }else {
+    //     console.log("hihi")
+    //     this.ischeckAll = true
+    //   }
+    // },
     pageNumber: function (newValue) {
       if (newValue == 1) {
         this.isDisablePre = true;
@@ -437,7 +456,7 @@ export default {
         this.isDisablePre = false;
         this.isDisablePreBtn = false;
       }
-      if (newValue == this.pageSize - 1) {
+      if (newValue == this.totalPage) {
         this.isDisableNextBtn = true;
         this.isDisableNext = true;
       } else {
@@ -445,10 +464,54 @@ export default {
         this.isDisableNext = false;
       }
     },
+
+    totalCount: function (newValue){
+      if (newValue < this.pageSize){
+        this.isDisableNextBtn = true;
+        this.isDisableNext = true;
+      }
+      else{
+        this.isDisableNextBtn = false;
+        this.isDisableNext = false;
+      }
+    }
   },
   methods: {
+    updateCurrentId(id,status) {
+      if(id) {
+        if(status) {
+          if(!this.selectedCurrentIDList.includes(id))
+            this.selectedCurrentIDList.push(id)
+        }else {
+          if(this.selectedCurrentIDList.includes(id))
+          this.selectedCurrentIDList = this.selectedCurrentIDList.filter(item => item != id)
+        }
+      }
+      if(this.selectedCurrentIDList.length != this.pageSize)
+      {
+        this.ischeckAll = false
+      }else {
+        this.ischeckAll = true
+      }
+    },
+
+    /**
+     * Ngăn chặn sự kiện doubleClick
+     * Author: DTLap(10/04/2023)
+     */
+     handleDoubleClick() {
+      if (!this.isProcessingDoubleClick) {
+        this.isProcessingDoubleClick = true;
+        // Xử lý logic của nút ở đây
+        setTimeout(() => {
+          this.isProcessingDoubleClick = false;
+        }, 1000); // Thời gian giới hạn cho xử lý, ở đây là 1 giây
+      }
+    },
+
     /**
      * Sự kiện click vào nút xuất khẩu theo danh sách đã chọn
+     * Author: DTLap(10/04/2023)
      */
     btnExportListOnClick() {
       axios
@@ -476,6 +539,7 @@ export default {
 
     /**
      * Sự kiện gọi api xóa nhiều
+     * Author: DTLap(10/04/2023)
      */
     deleteMultipleComfirm() {
       axios
@@ -496,6 +560,7 @@ export default {
 
     /**
      * Sự kiện khi click vào nút xóa nhiều
+     * Author: DTLap(10/04/2023)
      */
     deleteMultipleOnClick() {
       this.isShowDeleteMultipleDialog = true;
@@ -515,6 +580,7 @@ export default {
 
     /**
      * Sự kiện mở ra option menu
+     * Author: DTLap(10/04/2023)
      */
     btnOptionMenuOnCLick() {
       this.isShowOptionMenu = !this.isShowOptionMenu;
@@ -523,6 +589,7 @@ export default {
 
     /**
      * Sự kiện đóng optionMenu
+     * Author: DTLap(10/04/2023)
      */
     closeOptionMenu() {
       this.isShowOptionMenu = false;
@@ -530,6 +597,7 @@ export default {
 
     /**
      * Sự kiện khi click vào nút xuất khẩu
+     * Author: DTLap(10/04/2023)
      */
     btnExportOnClick() {
       axios
@@ -551,31 +619,57 @@ export default {
         });
     },
 
-    //test
+    /**
+     * Sự kiện click vào nút checkbox All
+     * Author: DTLap(10/04/2023)
+     */
     checkboxAllOnClick() {
       // this.ischeckAllParent = !this.ischeckAllParent;
       this.ischeckAll = !this.ischeckAll;
       if (this.ischeckAll == true) {
-        this.choosenItemArray = [];
         for (const idItem of this.employeeList) {
+          if(!this.choosenItemArray.includes(idItem.employeeId))
           this.choosenItemArray.push(idItem.employeeId);
         }
       } else {
-        this.choosenItemArray = [];
+        for (const idItem of this.employeeList) {
+          if(this.selectedCurrentIDList.includes(idItem.employeeId))
+            { console.log("hihi")
+              this.choosenItemArray = this.choosenItemArray.filter(item => item != idItem.employeeId);
+            }
+        }
+        this.selectedCurrentIDList = []
       }
-      if (this.choosenItemArray.length > 0) {
+      if (this.choosenItemArray.length >= 2) {
         this.isDisable = false;
       } else {
         this.isDisable = true;
       }
+      // if (this.choosenItemArray.length < this.pageSize){
+      //   this.ischeckAllParent = false;
+      // }
       console.log(this.choosenItemArray);
+    },
+
+    /**
+     * Sự kiện đóng form khi bấm nút esc
+     * Author: DTLap(10/04/2023)
+     */
+    CloseFormInput(){
+      this.isShowPopupDetail = false;
     },
 
     /**
      * click vào checkbox sẽ truyền id của dòng đó vào trong mảng được chọn
      * @param {id}
+     * Author: DTLap(10/04/2023)
      */
     checkboxRowOnClick(id) {
+      if(this.selectedCurrentIDList.includes(id))
+          this.selectedCurrentIDList = this.selectedCurrentIDList.filter(item => item != id)
+      else {
+        this.selectedCurrentIDList.push(id)
+      }
       if (this.choosenItemArray.includes(id)) {
         this.choosenItemArray = this.choosenItemArray.filter(
           (item) => item != id
@@ -583,8 +677,8 @@ export default {
       } else {
         this.choosenItemArray.push(id);
       }
-      console.log(this.choosenItemArray.join());
-      if (this.choosenItemArray.length > 0) {
+      // console.log(this.choosenItemArray.join());
+      if (this.choosenItemArray.length > 1) {
         this.isDisable = false;
       } else {
         this.isDisable = true;
@@ -598,6 +692,7 @@ export default {
 
     /**
      * Cũng là show toast nhưng là sửa thành công
+     * Author: DTLap(10/04/2023)
      */
     showToastUpdateSuccess() {
       this.isShowSuccessToast = true;
@@ -609,6 +704,7 @@ export default {
 
     /**
      * Show toast thêm mới thành công
+     * Author: DTLap(10/04/2023)
      */
     showToastInsertSuccess() {
       this.isShowSuccessToast = true;
@@ -620,6 +716,7 @@ export default {
 
     /**
      * Sự kiện xóa và đóng form Xác nhận xóa
+     * Author: DTLap(10/04/2023)
      */
     deleteConfirm() {
       axios
@@ -640,6 +737,7 @@ export default {
 
     /**
      * Tắt toast xóa thành công
+     * Author: DTLap(10/04/2023)
      */
     setDeleteSuccessToastOff() {
       this.isShowDeleteSuccessToast = false;
@@ -647,6 +745,7 @@ export default {
 
     /**
      * Sự kiện mở dialog xóa
+     * author: DTLap (09/03)
      */
     openDialogDelete() {
       this.isShowDeleteDialog = true;
@@ -719,9 +818,9 @@ export default {
      * author: DTLap(02/03)
      */
     btnReloadOnClick() {
-      this.pageNumber = 1;
-      this.renderData();
+      // this.pageNumber = 1;
       this.keyWord = "";
+      this.renderData();
     },
 
     /**
@@ -729,11 +828,13 @@ export default {
      * author: DTLap (02/03)
      */
     btnPreOnClick() {
+      this.selectedCurrentIDList = []
       if (this.pageNumber == 1) {
         console.log();
       } else {
         this.pageNumber -= 1;
         this.renderData();
+        this.ischeckAllParent = false;
       }
       console.log(this.pageNumber);
     },
@@ -742,12 +843,14 @@ export default {
      * author: DTLap (02/03)
      */
     btnNextOnClick() {
+      this.selectedCurrentIDList = []
       if (this.pageNumber == this.totalPage) {
         this.isDisableNextBtn = true;
       } else {
         this.isDisableNextBtn = false;
         this.pageNumber += 1;
         this.renderData();
+        this.ischeckAllParent = false;
       }
       console.log(this.pageNumber);
     },
@@ -778,9 +881,11 @@ export default {
      */
     renderData() {
       this.isLoading = true;
+      this.listEmployeeIDPage = [];
+
       axios
         .get(
-          `https://localhost:7252/api/v1/Employees?pageSize=${this.pageSize}&pageNumber=${this.pageNumber}`
+          `https://localhost:7252/api/v1/Employees?keyWord=${this.keyWord}&pageSize=${this.pageSize}&pageNumber=${this.pageNumber}`
         )
         .then((response) => {
           console.log(response);
@@ -789,10 +894,17 @@ export default {
           this.totalPage = Math.ceil(response.data.totalRecord / this.pageSize);
           this.totalCount = response.data.totalRecord;
           this.isLoading = false;
+          for (const item of this.employeeList) {
+            this.listEmployeeIDPage.push(item.employeeId);
+          }
+          console.log(this.listEmployeeIDPage.length);
+          this.selectedCurrentIDList = []
+          this.ischeckAll = false
         })
         .catch((error) => {
           console.log(error);
         });
+        
     },
 
     /**
@@ -805,7 +917,6 @@ export default {
         this.isShowPopupDetail = true;
         this.employeeSelectedID = itemID;
         this.isFormAdd = "Edit";
-        //Lập đẹp trai
       } catch (error) {
         console.log(error);
       }
@@ -813,6 +924,7 @@ export default {
 
     /**
      * Sự kiên khi nhấn nút nhân bản sẽ truyền id vào form
+     * author: DTLap (09/03)
      */
     duplicateRow() {
       try {
@@ -848,6 +960,7 @@ export default {
 
     /**
      * lấy dữ liệu tất cả phòng ban
+     * author: DTLap (09/03)
      */
     renderDepartment() {
       axios
@@ -863,6 +976,7 @@ export default {
 
     /**
      * chuyển đổi ngày tháng về đúng định dạng
+     * author: DTLap (09/03)
      */
     convertDateTime(i) {
       let granted = new Date(i);
@@ -880,8 +994,9 @@ export default {
     },
 
     /**
-     * Hiển thị tê phòng ban
+     * Hiển thị tên phòng ban
      * @param {id phòng ban} id
+     * author: DTLap (09/03)
      */
     getDepartmentName(id) {
       let name = this.departments.filter((item) => item.DepartmentId == id)[0]
@@ -892,6 +1007,7 @@ export default {
     /**
      * Hiển thị text giới tính
      * @param {int giới tính} i
+     * author: DTLap (09/03)
      */
     getGenderName(i) {
       if (i == 0) {
@@ -980,7 +1096,7 @@ export default {
   left: 0px;
   display: flex;
   align-items: center;
-  padding-left: 8px;
+  padding-left: 16px;
   cursor: pointer;
   background-color: #fff;
 }

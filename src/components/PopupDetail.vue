@@ -1,5 +1,9 @@
-<template>
-  <div class="lap_popup-container" id="form">
+<template @click="outSideFormOnClick">
+  <div
+    class="lap_popup-container"
+    id="form"
+    @keyup.esc="btnClosePopupDetailOnClick"
+  >
     <div class="lap_popup-form">
       <div class="lap_popup__header">
         <div class="title">{{ formTitle }}</div>
@@ -40,6 +44,7 @@
                 :class="{ 'input--red': isErrorTxtFullName }"
                 :title="tooltipFullName"
                 @blur="inputTxtFullNameOnBlur"
+                ref="fullName"
               />
             </div>
           </div>
@@ -67,6 +72,7 @@
                 propText="DepartmentName"
                 propValue="DepartmentId"
                 v-model="employee.departmentId"
+                ref="departmentId"
               >
               </MCombobox>
             </div>
@@ -96,11 +102,13 @@
                 style="text-transform: uppercase"
                 :value="convertDateTime(employee.dateOfBirth)"
                 @change="dobOnChange($event)"
+                :title="tooltipDateOfBirth"
+                ref="dateOfBirth"
               />
             </div>
             <div class="lap_input-field flex-1">
               <div class="lap_label">Giới tính</div>
-              <div class="lap_input-info lap_gender_radio">
+              <div class="lap_gender_radio">
                 <div class="lap_radio-contain">
                   <input
                     type="radio"
@@ -108,7 +116,7 @@
                     name="gender"
                     id="male"
                     class="lap_radio"
-                    :value=0
+                    :value="0"
                     v-model="employee.gender"
                   />
                   <label for="male">Nam</label>
@@ -119,7 +127,7 @@
                     name="gender"
                     id="female"
                     class="lap_radio"
-                    :value=1
+                    :value="1"
                     v-model="employee.gender"
                     tabindex="7"
                   />
@@ -131,7 +139,7 @@
                     name="gender"
                     id="other"
                     class="lap_radio"
-                    :value=2
+                    :value="2"
                     tabindex="8"
                     v-model="employee.gender"
                   />
@@ -199,6 +207,7 @@
                 v-model="employee.phoneNumber"
                 :class="{ 'input--red': isErrorTxtPhoneNumber }"
                 :title="tooltipPhoneNumber"
+                ref="phoneNumber"
               />
             </div>
             <div class="lap_input-field lap_flex-2">
@@ -222,6 +231,7 @@
                 v-model="employee.email"
                 :class="{ 'input--red': isErrorTxtEmail }"
                 :title="tooltipEmail"
+                ref="email"
               />
             </div>
           </div>
@@ -268,6 +278,7 @@
         <div class="lap_group-btn-right">
           <div
             class="btn-second tabindex2"
+            :class="{ button: isGreen }"
             tabindex="19"
             id="btnSave"
             @click="btnSaveOnClick"
@@ -320,7 +331,7 @@
     </div>
 
     <!-- ----------------------------------------------------------------- -->
-    <div class="popup-warning" v-if="isShowValidateWarning">
+    <div class="popup-warning" style="z-index: " v-if="isShowValidateWarning">
       <div class="popup-warning__header">
         <div class="popup-warning__header__title">Cảnh báo</div>
         <div
@@ -372,6 +383,16 @@
       >
         <div class="warning-icon"></div>
         <div class="warning-text">Bạn nhập sai định dạng Email</div>
+      </div>
+      <div
+        class="popup-warning__body warning"
+        id="requiredText"
+        v-if="isErrorDateOfBirth"
+      >
+        <div class="warning-icon"></div>
+        <div class="warning-text">
+          Ngày sinh không được lớn hơn ngày hiện tại
+        </div>
       </div>
       <div class="popup-warning__footer">
         <div class="popup-group-btn">
@@ -456,6 +477,9 @@ export default {
       isShowValidateWarning: false,
       turnGreen: false,
       dateOfBirthInput: null,
+      isGreen: false,
+      tooltipDateOfBirth: "",
+      isErrorDateOfBirth: true,
     };
   },
 
@@ -467,11 +491,13 @@ export default {
       this.formTitle = "Sửa thông tin nhân viên";
       this.getEmployeeInfomation();
       this.isShowAddAndnewButton = false;
+      this.isGreen = true;
     } else if (this.formMode == "Dupplicate") {
       await this.getEmployeeInfomation();
       await this.getNewCode();
       this.formTitle = "Nhân bản thông tin nhân viên";
       this.isShowAddAndnewButton = false;
+      this.isGreen = true;
     }
     console.log(this.employeeSelectedRow);
     // this.employee.employeeCode = this.employee.employeeCode;
@@ -494,7 +520,7 @@ export default {
   watch: {
     dateOfBirthInput: function (newValue) {
       console.log(newValue);
-    }
+    },
   },
 
   mounted() {
@@ -506,20 +532,40 @@ export default {
   },
 
   methods: {
-    dobOnChange(event){
+    /**
+     * Sự kiện gán ngày tháng
+     * @param {} event
+     * author: DTLap (09/03)
+     */
+    dobOnChange(event) {
       this.employee.dateOfBirth = this.convertDateTime(event.target.value);
       console.log(this.employee.dateOfBirth);
     },
 
     /**
      * Sự kiện đóng popup cảnh báo
+     * author: DTLap (09/03)
      */
     btnCloseDialogOnClick() {
       this.isShowOnChangeDialog = false;
     },
 
     /**
+     * Sự kiện khi bấm form bên ngoài
+     * author: DTLap (09/03)
+     */
+    outSideFormOnClick() {
+      let width = event.target.getBoundingClientRect().width;
+      let height = event.target.getBoundingClientRect().height;
+      console.log(width, height);
+      if (width >= 871 && height >= 603) {
+        this.btnClosePopupDetailOnClick();
+      }
+    },
+
+    /**
      * Sự kiện khi bấm nút cất và thêm mới
+     * author: DTLap (09/03)
      */
     async btnSaveAndNewOnClick() {
       if (this.formMode == "Add") {
@@ -530,30 +576,32 @@ export default {
             this.$emit("insertSuccess");
             this.getNewCode();
             this.$el.querySelector("input").focus();
+            this.employee = {};
           })
           .catch(async (error) => {
-              // console.log(error);
-              // console.log(error.response.data.userMsg);
-              // this.popupResponse = (await (error)).response.data.userMsg;
-              // this.isShowPopupResponse = true;
-              const promiseA = new Promise((resolve) => {
-                resolve(error);
-              });
-              promiseA
-                .then((data) => {
-                  this.popupResponse = data.response.data.userMsg;
-                  console.log(data.response.data.userMsg);
-                })
-                .then(() => {
-                  this.isShowPopupResponse = true;
-                  console.log("hello", this.popupResponse);
-                });
+            // console.log(error);
+            // console.log(error.response.data.userMsg);
+            // this.popupResponse = (await (error)).response.data.userMsg;
+            // this.isShowPopupResponse = true;
+            const promiseA = new Promise((resolve) => {
+              resolve(error);
             });
+            promiseA
+              .then((data) => {
+                this.popupResponse = data.response.data.userMsg;
+                console.log(data.response.data.userMsg);
+              })
+              .then(() => {
+                this.isShowPopupResponse = true;
+                console.log("hello", this.popupResponse);
+              });
+          });
       }
     },
 
     /**
      * Đóng pop up validate
+     * author: DTLap (09/03)
      */
     btnCloseValidatePopup() {
       this.isShowValidateWarning = false;
@@ -561,15 +609,17 @@ export default {
 
     /**
      * chuyển đổi ngày tháng về đúng định dạng
+     * author: DTLap (09/03)
      */
     convertDateTime(i) {
       if (i) {
-        let dob = i.substring(0,10);
+        let dob = i.substring(0, 10);
         return dob;
       }
     },
     /**
      * Sự kiện lấy thông tin nhân viên được chọn để hiển thị lên trang form
+     * author: DTLap (09/03)
      */
     getEmployeeInfomation() {
       axios
@@ -647,20 +697,21 @@ export default {
      ** author: DTLap (01/03)
      *
      */
-    inputTxtDepartmentOnBlur() {
-      let department = this.employee.department;
-      if (department == undefined) {
-        this.isErrorTxtDepartment = true;
-        this.tooltipDepartment = "Bạn chưa nhập Tên đơn vị!";
-      } else {
-        this.isErrorTxtDepartment = false;
-        this.tooltipDepartment = "";
-        console.log(123);
-      }
-    },
+    // inputTxtDepartmentOnBlur() {
+    //   let department = this.employee.department;
+    //   if (department == undefined) {
+    //     this.isErrorTxtDepartment = true;
+    //     this.tooltipDepartment = "Bạn chưa nhập Tên đơn vị!";
+    //   } else {
+    //     this.isErrorTxtDepartment = false;
+    //     this.tooltipDepartment = "";
+    //     console.log(123);
+    //   }
+    // },
 
     /**
      * Sự kiện đóng popup
+     * author: DTLap (09/03)
      */
     btnClosePopupResponseOnClick() {
       this.isShowPopupResponse = false;
@@ -681,7 +732,10 @@ export default {
       // console.log(this.employee.grantedDate);
     },
 
-    //Đóng popup
+    /*
+     * Đóng popup
+     * author: DTLap (09/03)
+     */
     closePopUp() {
       this.$emit("CloseButtonOnClick");
       this.isShowOnChangeDialog = false;
@@ -761,15 +815,18 @@ export default {
       }
     },
 
-    validate(){
-    //Đóng pop up
-    this.isShowOnChangeDialog = false;
+    /**
+     * Hàm validate dữ liệu
+     * author: DTLap (09/03)
+     */
+    validate() {
+      //Đóng pop up
+      this.isShowOnChangeDialog = false;
       let employeeCode = this.employee.employeeCode;
       let fullName = this.employee.fullName;
       let department = this.employee.departmentId;
       let email = this.employee.email;
       let phoneNumber = this.employee.phoneNumber;
-      let fixedNum = this.employee.fixedNumber;
 
       //format dữ liệu ngày tháng
       // let granted = new Date(this.employee.grantedDate);
@@ -792,6 +849,8 @@ export default {
 
       let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/;
       let phoneNumberRegex = /[0-9]{10}/;
+      const now = new Date();
+      const currentDateTime = now.toISOString();
 
       if (employeeCode == undefined) {
         this.isErrorTxtEmployeeCode = true;
@@ -803,36 +862,38 @@ export default {
         this.isErrorTxtFullName = true;
         this.tooltipFullName = "Bạn chưa nhập họ và tên!";
         this.isShowValidateWarning = true;
+        this.$refs.fullName.focus();
       }
 
       if (department == undefined) {
         this.isErrorTxtDepartment = true;
         this.tooltipDepartment = "Bạn chưa nhập Đơn vị!";
         this.isShowValidateWarning = true;
+        this.$refs.departmentId.focus();
       }
 
       if (!emailRegex.test(email) && email) {
         this.isErrorTxtEmail = true;
         this.tooltipEmail = "Bạn nhập sai định dạng Email!";
         this.isShowValidateWarning = true;
+        this.$refs.email.focus();
       }
 
       if (!phoneNumberRegex.test(phoneNumber) && phoneNumber) {
         this.isErrorTxtPhoneNumber = true;
         this.tooltipPhoneNumber = "Bạn nhập sai định dạng Số điện thoại!";
         this.isShowValidateWarning = true;
+        this.$refs.phoneNumber.focus();
       }
 
-      if (!phoneNumberRegex.test(fixedNum) && fixedNum) {
-        this.isErrorTxtFixedNumber = true;
-        this.tooltipFixedNumber =
-          "Bạn nhập sai định dạng Số điện thoại cố định!";
+      if (this.employee.dateOfBirth > currentDateTime) {
+        this.tooltipDateOfBirth = "Ngày sinh không được lớn hơn ngày hiện tại";
+        this.isErrorDateOfBirth = true;
         this.isShowValidateWarning = true;
+        this.$refs.dateOfBirth.focus();
       }
+    },
   },
-
-  },
-
 };
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="mcombobox">
+  <div class="mcombobox" :class="{'errorInput' : isBorderRed}" :title="title">
     <input
       type="text"
       class="combobox__input"
@@ -7,6 +7,7 @@
       @keydown="inputOnKeyDown"
       :tabindex="propTabIndex"
       @input="isShowData = true"
+      @blur="inputOnBlur"
     />
     <button class="combobox__button" @click="btShowDataOnClick"></button>
     <div class="combobox__data" v-show="isShowData">
@@ -83,6 +84,11 @@ export default {
   },
  
   watch: {
+
+    error: function(newValue){
+      this.isBorderRed = newValue;
+      console.log(newValue);
+    },
     data: function (newData) {
       this.dataArray = newData;
     },
@@ -125,9 +131,22 @@ export default {
       rootData: [],
       indexSelected: null,
       isShowDataItem: true,
+      isBorderRed: false,
+      title: "",
     };
   },
   methods: {
+
+    /**
+     * sự kiện blur ô input
+     */
+     inputOnBlur(){
+      if (this.textInput == ""){
+        this.isBorderRed = true;
+        this.title = "Tên đơn vị không được để trống";
+      }
+     },
+
     /**
      * Lựa chọn item trong combobox-data khi nhấn phím lên, xuống, enter
      */
@@ -181,6 +200,9 @@ export default {
       //Đóng hiển thị data
       this.isShowData = !this.isShowData;
       // this.isShowDataItem = false;
+      //Bỏ border màu đỏ
+      this.isBorderRed = false;
+      this.title = "";
     },
 
     inputData(item) {

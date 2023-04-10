@@ -1,7 +1,7 @@
 .button {
     height: 36px;
     border: unset;
-    background-color: #50B83C;
+    background-color: #50B83C !important;
     border-radius: 4px;
     font-family: DangLap-font;
     font-size: 14px;

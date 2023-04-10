@@ -205,6 +205,12 @@
     align-items: center;
     padding-left: 0;
     column-gap: 8px;
+    outline: none;
+    height: 36px;
+    padding: 8px 12px 8px 12px;
+    border-radius: 4px;
+    width: 100%;
+    display: flex;
 }
 .lap_gender_radio:hover{
     border: unset;
